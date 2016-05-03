@@ -2,14 +2,16 @@ var audioContext = null;
 var isPlaying = false;      // Are we currently playing?
 var startTime;              // The start time of the entire sequence.
 var current16thNote;        // What note is currently last scheduled?
-var tempo = 120.0;          // tempo (in beats per minute)
-var lookahead = 25.0;       // How frequently to call scheduling function 
+var tempo = 80.0;          // tempo (in beats per minute)
+                            // llf: starting at 120 is too fast for me
+var lookahead = 25.0;       // How frequently to call scheduling function
                             //(in milliseconds)
 var scheduleAheadTime = 0.1;    // How far ahead to schedule audio (sec)
-                            // This is calculated from lookahead, and overlaps 
+                            // This is calculated from lookahead, and overlaps
                             // with next interval (in case the timer is late)
 var nextNoteTime = 0.0;     // when the next note is due.
 var noteResolution = 0;     // 0 == 16th, 1 == 8th, 2 == quarter note
+                            // llf: can we add 3 == 8th tripet?
 var noteLength = 0.05;      // length of "beep" (in seconds)
 var canvas,                 // the canvas element
     canvasContext;          // canvasContext is the canvas' context 2D
@@ -33,7 +35,7 @@ window.requestAnimFrame = (function(){
 
 function nextNote() {
     // Advance current note and time by a 16th note...
-    var secondsPerBeat = 60.0 / tempo;    // Notice this picks up the CURRENT 
+    var secondsPerBeat = 60.0 / tempo;    // Notice this picks up the CURRENT
                                           // tempo value to calculate beat length.
     nextNoteTime += 0.25 * secondsPerBeat;    // Add beat length to last beat time
 
@@ -67,7 +69,7 @@ function scheduleNote( beatNumber, time ) {
 }
 
 function scheduler() {
-    // while there are notes that will need to play before the next interval, 
+    // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (nextNoteTime < audioContext.currentTime + scheduleAheadTime ) {
         scheduleNote( current16thNote, nextNoteTime );
@@ -95,7 +97,7 @@ function resetCanvas (e) {
     canvas.height = window.innerHeight;
 
     //make sure we scroll to the top left.
-    window.scrollTo(0,0); 
+    window.scrollTo(0,0);
 }
 
 function draw() {
@@ -110,9 +112,9 @@ function draw() {
     // We only need to draw if the note has moved.
     if (last16thNoteDrawn != currentNote) {
         var x = Math.floor( canvas.width / 18 );
-        canvasContext.clearRect(0,0,canvas.width, canvas.height); 
+        canvasContext.clearRect(0,0,canvas.width, canvas.height);
         for (var i=0; i<16; i++) {
-            canvasContext.fillStyle = ( currentNote == i ) ? 
+            canvasContext.fillStyle = ( currentNote == i ) ?
                 ((currentNote%4 === 0)?"red":"blue") : "black";
             canvasContext.fillRect( x * (i+1), x, x/2, x/2 );
         }
@@ -129,10 +131,10 @@ function init(){
     container.className = "container";
     canvas = document.createElement( 'canvas' );
     canvasContext = canvas.getContext( '2d' );
-    canvas.width = window.innerWidth; 
-    canvas.height = window.innerHeight; 
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     document.body.appendChild( container );
-    container.appendChild(canvas);    
+    container.appendChild(canvas);
     canvasContext.strokeStyle = "#ffffff";
     canvasContext.lineWidth = 2;
 
@@ -164,4 +166,3 @@ function init(){
 }
 
 window.addEventListener("load", init );
-
