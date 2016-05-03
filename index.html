@@ -7,14 +7,42 @@
     <link rel="stylesheet" href="css/main.css">
     <script src="https://cwilso.github.io/AudioContext-MonkeyPatch/AudioContextMonkeyPatch.js"></script>
     <script src="js/metronome.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.cyan-light_green.min.css">
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
   </head>
   <body>
-    <a href="https://github.com/lflee/metronome" style="position: absolute; top: -5px; right: 15px;">Fork me on GitHub</a>
+
+    <header>
+      Metronome
+    </header>
+    <ul class="demo-list-icon mdl-list">
+        <li class="mdl-list__item">
+          <span class="mdl-list__item-primary-content">
+              <i class="material-icons mdl-list__item-icon">star</i>
+              Use the slider or type the bpm
+          </span>
+        </li>
+        <li class="mdl-list__item">
+          <span class="mdl-list__item-primary-content">
+              <i class="material-icons mdl-list__item-icon">star</i>
+              Choose a beat pattern from the dropdown menu
+          </span>
+        </li>
+        <li class="mdl-list__item">
+          <span class="mdl-list__item-primary-content">
+              <i class="material-icons mdl-list__item-icon">star</i>
+              Hit "Play" and practise your instrument!
+          </span>
+        </li>        
+    </ul>
+
     <div id="controls">
       <div><a class="play" onclick="this.innerText = play();">play</a></div>
       <div id="tempoBox">Tempo: <span id="showTempo">60</span>BPM
         <p>
-          <input id="tempo" type="range" min="30.0" max="160.0" step="1" value="60" style="height: 20px; width: 200px" onInput="tempo = event.target.value;
+          <input id="tempo" class="mdl-slider mdl-js-slider" type="range" min="30.0" max="160.0" step="1" value="60" style="height: 20px; width: 200px" onInput="tempo = event.target.value;
                                                                                                                                document.getElementById('showTempo').innerText=tempo;
                                                                                                                                document.getElementById('typeTempo').value=tempo;">
         </p>
@@ -34,5 +62,10 @@
         </select>
       </div>
     </div>
+    <footer>
+      <a href="https://github.com/lflee/metronome/blob/master/LICENSE.txt">License</a><br>
+      Me at <a href="https://github.com/lflee">Github</a>, <a href="https://plus.google.com/100566728750983766808">G+</a>, <a href="https://twitter.com/LLF">Twitter</a><br>
+      <a href="https://github.com/lflee/metronome">Fork me on github</a>
+    </footer>
    </body>
 </html>
