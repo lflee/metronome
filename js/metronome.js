@@ -1,8 +1,14 @@
 var audioContext = null;
 var isPlaying = false;      // Are we currently playing?
 var startTime;              // The start time of the entire sequence.
+
+/*
 var current16thNote;        // What note is currently last scheduled?
-var tempo = 80.0;          // tempo (in beats per minute)
+var current12thNote;        // llf: What note is currently last scheduled? For 8th note triplet inplementation
+*/
+
+var current48thNote;        // llf: LCM of 12 and 16 == 48, select different multipliers for (8, 16) or (12) count
+var tempo = 60.0;          // tempo (in beats per minute)
                             // llf: starting at 120 is too fast for me
 var lookahead = 25.0;       // How frequently to call scheduling function
                             //(in milliseconds)
@@ -15,7 +21,9 @@ var noteResolution = 0;     // 0 == 16th, 1 == 8th, 2 == quarter note
 var noteLength = 0.05;      // length of "beep" (in seconds)
 var canvas,                 // the canvas element
     canvasContext;          // canvasContext is the canvas' context 2D
-var last16thNoteDrawn = -1; // the last "box" we drew on the screen
+
+var last48thNoteDrawn = -1; // the last "box" we drew on the screen
+// var last16thNoteDrawn = -1; // the last "box" we drew on the screen
 var notesInQueue = [];      // the notes that have been put into the web audio,
                             // and may or may not have played yet. {note, time}
 var timerWorker = null;     // The Web Worker used to fire timer messages
@@ -35,34 +43,116 @@ window.requestAnimFrame = (function(){
 
 function nextNote() {
     // Advance current note and time by a 16th note...
-    var secondsPerBeat = 60.0 / tempo;    // Notice this picks up the CURRENT
+
+//    var secondsPerBeat = 60.0 / tempo;    // Notice this picks up the CURRENT
+    var secondsPerBeat = 20.0 / tempo;    // Notice this picks up the CURRENT
                                           // tempo value to calculate beat length.
+
+
     nextNoteTime += 0.25 * secondsPerBeat;    // Add beat length to last beat time
 
+    current48thNote++;    // Advance the beat number, wrap to zero
+    if (current48thNote == 48) {
+        current48thNote = 0;
+    }
+
+/* Original codes
     current16thNote++;    // Advance the beat number, wrap to zero
     if (current16thNote == 16) {
         current16thNote = 0;
     }
+*/
+
 }
 
 function scheduleNote( beatNumber, time ) {
     // push the note on the queue, even if we're not playing.
     notesInQueue.push( { note: beatNumber, time: time } );
 
-    if ( (noteResolution==1) && (beatNumber%2))
+
+    if ( (noteResolution==0) && (beatNumber%3)) // not playing non-16th note 48th notes
+      return ;
+    if ( (noteResolution==1) && (beatNumber%6)) // not playing non-8th note 48th notes
+      return ;
+    if ( (noteResolution==2) && (beatNumber%12)) // not playing non-4th note 48th notes
+      return ;
+    if ( (noteResolution==3) && (beatNumber%4)) // not playing non-8th-triplet note 48th notes
+      return ;
+
+
+          var osc = audioContext.createOscillator();
+          osc.connect( audioContext.destination );
+
+
+
+    // create an oscillator
+//    if (beatNumber % 16 === 0)    // beat 0 == low pitch
+    if (beatNumber % 48 === 0)    // llf: beat 0 ==  pitch
+        osc.frequency.value = 880.0;
+//    else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
+    else if (beatNumber % 12 === 0 )    // beat 0 == low pitch
+        osc.frequency.value = 440.0;
+    else                        // other 16th notes = high pitch
+        osc.frequency.value = 220.0;
+
+
+/*
+            if ( (noteResolution==1) && (beatNumber%6)) // oscillator for every 3 48th note
+              return ;
+            // create an oscillator
+        //    if (beatNumber % 16 === 0)    // beat 0 == low pitch
+            if (beatNumber % 48 === 0)    // llf: beat 0 == No pitch
+                osc.frequency.value = 880.0;
+        //    else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
+            else if (beatNumber % 12 === 0 )    // beat 0 == low pitch
+                osc.frequency.value = 440.0;
+            else if (beatNumber % 3 === 0 )
+                osc.frequency.value = 220.0;
+            else                        // other 16th notes = high pitch
+                osc.frequency.value = 0.0;
+
+
+
+    if ( (noteResolution==2) && (beatNumber%6)) // oscillator for every 3 48th note
+      return ;
+    // create an oscillator
+//    if (beatNumber % 16 === 0)    // beat 0 == low pitch
+    if (beatNumber % 12 === 0)    // llf: beat 0 == No pitch
+        osc.frequency.value = 880.0;
+//    else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
+    else if (beatNumber % 6 === 0 )    // beat 0 == low pitch
+        osc.frequency.value = 220.0;
+    else if (beatNumber % 3 === 0 )
+        osc.frequency.value = 220.0;
+    else                        // other 16th notes = high pitch
+        osc.frequency.value = 0.0;
+
+*/
+
+
+
+/*
+//    if ( (noteResolution==1) && (beatNumber%2))
+    if ( (noteResolution==1) && (beatNumber%6))
         return; // we're not playing non-8th 16th notes
-    if ( (noteResolution==2) && (beatNumber%4))
+// if ( (noteResolution==2) && (beatNumber%4))
+    if ( (noteResolution==2) && (beatNumber%12))
         return; // we're not playing non-quarter 8th notes
 
     // create an oscillator
     var osc = audioContext.createOscillator();
     osc.connect( audioContext.destination );
-    if (beatNumber % 16 === 0)    // beat 0 == low pitch
-        osc.frequency.value = 880.0;
+//    if (beatNumber % 16 === 0)    // beat 0 == low pitch
+    if (beatNumber % 48 === 0)    // llf: beat 0 == No pitch
+//        osc.frequency.value = 880.0;
+        osc.frequency.value = 0.0;
+//    else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
     else if (beatNumber % 4 === 0 )    // quarter notes = medium pitch
         osc.frequency.value = 440.0;
     else                        // other 16th notes = high pitch
         osc.frequency.value = 220.0;
+*/
+
 
     osc.start( time );
     osc.stop( time + noteLength );
@@ -72,7 +162,7 @@ function scheduler() {
     // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (nextNoteTime < audioContext.currentTime + scheduleAheadTime ) {
-        scheduleNote( current16thNote, nextNoteTime );
+        scheduleNote( current48thNote, nextNoteTime );
         nextNote();
     }
 }
@@ -81,7 +171,8 @@ function play() {
     isPlaying = !isPlaying;
 
     if (isPlaying) { // start playing
-        current16thNote = 0;
+          current48thNote = 0;
+//        current16thNote = 0;
         nextNoteTime = audioContext.currentTime;
         timerWorker.postMessage("start");
         return "stop";
@@ -101,7 +192,8 @@ function resetCanvas (e) {
 }
 
 function draw() {
-    var currentNote = last16thNoteDrawn;
+    var currentNote = last48thNoteDrawn;
+//    var currentNote = last16thNoteDrawn;
     var currentTime = audioContext.currentTime;
 
     while (notesInQueue.length && notesInQueue[0].time < currentTime) {
@@ -109,6 +201,23 @@ function draw() {
         notesInQueue.splice(0,1);   // remove note from queue
     }
 
+    // We only need to draw if the note has moved.
+//    if (last16thNoteDrawn != currentNote) {
+    if (last48thNoteDrawn != currentNote) {
+//      var x = Math.floor( canvas.width / 18 );
+        var x = Math.floor( canvas.width / 50 );
+        canvasContext.clearRect(0,0,canvas.width, canvas.height);
+//      for (var i=0; i<16; i++) {
+        for (var i=0; i<48; i++) {
+            canvasContext.fillStyle = ( currentNote == i ) ?
+                ((currentNote%4 === 0)?"red":"blue") : "black";
+            canvasContext.fillRect( x * (i+1), x, x/2, x/2 );
+        }
+//      last16thNoteDrawn = currentNote;
+        last48thNoteDrawn = currentNote;
+    }
+
+/* Original codes
     // We only need to draw if the note has moved.
     if (last16thNoteDrawn != currentNote) {
         var x = Math.floor( canvas.width / 18 );
@@ -120,7 +229,7 @@ function draw() {
         }
         last16thNoteDrawn = currentNote;
     }
-
+*/
     // set up to draw again
     requestAnimFrame(draw);
 }
