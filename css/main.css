@@ -50,6 +50,12 @@
 	width: 40px;
 }
 
+#cwTeXKai {
+	font-family: 'cwTeXKai', serif;
+	font-size: 48px;
+}
+
+
 * {
     -webkit-user-select: none;
 }
