@@ -6,9 +6,9 @@
     <!-- Add to homescreen for Chrome on Android -->
     <meta name="mobile-web-app-capable" content="yes">
 
-    <meta name="google-site-verification" content="l--0yZT_naddmZ_QOAeCgq4T2HTNaSBx_PNJsDeT4o0" />
+    <title>動物拍子機</title>
 
-    <title>Web Audio Metronome with triplet counts</title>
+<!-- 隨機用唔同動物嘅聲音嚟做拍子機 -->
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -21,54 +21,56 @@
   </head>
   <body>
     <header>
-      ♩ ♫ ♬ Metronome ♬ ♫ ♩
+      ♩ ♫ ♬ 動物拍子機 ♬ ♫ ♩
     </header>
     <ol class="demo-list-icon mdl-list">
         <li class="mdl-list__item">
           <span class="mdl-list__item-primary-content">
-              Use the slider or type the BPM
+              <!-- Use the slider or type the BPM -->
+              用 slider 或打你想要嘅 BPM
             </span>
         </li>
         <li class="mdl-list__item">
           <span class="mdl-list__item-primary-content">
-              Choose a beat pattern from the dropdown menu
+              <!-- Choose a beat pattern from the dropdown menu -->
+              喺個下拉選單度揀數拍子嘅方式
           </span>
         </li>
         <li class="mdl-list__item">
           <span class="mdl-list__item-primary-content">
-              Hit "Play" and practise your instrument!
+              <!-- Hit "Play" and practise your instrument! -->
+              撳"開始"等啲動物同你一齊數拍子
           </span>
         </li>
     </ol>
 
-    <!-- <div id="controls">
-      </div> -->
-
-      <div id="tempoBox">Tempo: <span id="showTempo">60</span>BPM</div>
+      <div id="tempoBox">Tempo: <span id="showTempo">40</span>BPM</div>
       <p style="width:80%">
-        <input id="tempo" class="mdl-slider mdl-js-slider" type="range" min="30.0" max="200.0" step="1" value="60" onInput="tempo = event.target.value;
+        <input id="tempo" class="mdl-slider mdl-js-slider" type="range" min="20.0" max="100.0" step="1" value="40" onInput="tempo = event.target.value;
                                                                                                                              document.getElementById('showTempo').innerText=tempo;
                                                                                                                              document.getElementById('typeTempo').value=tempo;">
       </p>
+      <label class="mdl-slider__label" for="tempo">拉去你想要嘅 BPM...</label>
+<br>
       <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-        <input id="typeTempo" class="mdl-textfield__input" type="number" min="30.0" max="200.0" step="1" value="60" onChange="tempo = event.target.value;
+        <input id="typeTempo" class="mdl-textfield__input" type="number" min="20.0" max="100.0" step="1" value="40" onChange="tempo = event.target.value;
                                                                                                                                   document.getElementById('showTempo').innerText=tempo;
                                                                                                                                   document.getElementById('tempo').value=tempo;">
-        <label class="mdl-textfield__label" for="typeTempo">Type the BPM...</label>
-        <span class="mdl-textfield__error">BPM max: 200, min: 30</span>
+        <label class="mdl-textfield__label" for="typeTempo">或者喺度打 BPM 個數 -</label>
+        <span class="mdl-textfield__error">BPM 最大: 100, 最細: 20</span>
       </div>
 
-      <div>Beat pattern:
+      <div>數拍嘅方法:
         <select id="beatPattern" class="mdl-select mdl-js-select mdl-select--floating-label" onchange="noteResolution = this.selectedIndex;
                           console.log( 'Option' + this.selectedIndex + ' is selected');">
-          <option>16th notes
-          <option>8th notes
-          <option>Quarter notes
-          <option selected="selected">8th notes triplet
+          <option>16 分音 (One-e-and-a, Two-e-and-a...)
+          <option>8 分音 (One-and, Two-and...)
+          <option selected="selected">4 分音 (One, Two...)
+          <option>8 分 3 連音 (One-and-a, Two-and-a...)
         </select>
       </div>
 
-      <div><a class="play" onclick="this.innerText = play();">play</a></div>
+      <div><a class="開始" onclick="this.innerText = play();">play</a></div>
 
     <footer>
       <a href="https://github.com/lflee/metronome/blob/master/LICENSE.txt">License</a><br>
