@@ -156,7 +156,8 @@ function init(){
     // TO WORK ON CURRENT CHROME!!  But this means our code can be properly
     // spec-compliant, and work on Chrome, Safari and Firefox.
 
-    audioContext = new AudioContext();
+    // audioContext = new AudioContext();
+    audioContext = new AudioContext("sounds/elephant.mp3");
 
     // if we wanted to load audio files, etc., this is where we should do it.
 

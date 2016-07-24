@@ -1,0 +1,7 @@
+{
+  "name": "metronome",
+  "short_name": "metronome",
+  "description": "Metronome with animal sounds",
+  "start_url": "/",
+  "display": "standalone"
+}

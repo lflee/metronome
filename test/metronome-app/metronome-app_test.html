@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html>
+  <head>
+    <title>metronome-app test</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../../src/metronome-app/metronome-app.html">
+  </head>
+  <body>
+
+    <test-fixture id="basic">
+      <template>
+        <metronome-app></metronome-app>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('metronome-app', function() {
+
+        test('instantiating the element works', function() {
+          var element = fixture('basic');
+          assert.equal(element.is, 'metronome-app');
+        });
+
+      });
+    </script>
+  </body>
+</html>
